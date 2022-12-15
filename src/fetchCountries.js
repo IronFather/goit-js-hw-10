@@ -1,24 +1,29 @@
-import { Notify } from 'notiflix/build/notiflix-notify-aio';
-// import {  renderCountryList, renderCountryInfo } from './index';
-import { renderCountryList } from './index';
-import { renderCountryInfo } from './index';
+import Notiflix from 'notiflix';
+import 'notiflix/dist/notiflix-3.2.5.min.css';
+import getRefs from './get-refs';
+import {  renderCountryList, renderCountryInfo } from './index';
 
 export { fetchCountries };
 
-const END_POINT_URL = 'https://restcountries.com/v3.1';
+const refs = getRefs();
+const BASE_URL = 'https://restcountries.com/v3.1/name';
 
 function fetchCountries(name) {
-  const url = `${END_POINT_URL}/name/${name}?fields=name,capital,population,flags,languages`; 
+  const url = `${BASE_URL}/${name}?fields=name,capital,population,flags,languages`; 
   
   return fetch(url)
   .then(response => {
     if (!response.ok) {
       renderCountryList();
       renderCountryInfo();
-
-      throw new Error(Notify.failure('⛔Oops, there is no country with that name'));
+      throw new Error(errorNotFoud());
     }
 
     return response.json();
   });
+}
+
+function errorNotFoud() {
+  Notiflix.Notify.failure(`Oops, there is no country with that name`);
+  refs.searchBoxEl.classList.add(`warning`);
 }
