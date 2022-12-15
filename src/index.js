@@ -7,7 +7,7 @@ import getRefs from './get-refs';
 
 const debounce = require('lodash.debounce');
 const DEBOUNCE_DELAY = 300;
-const refs = getRefs()
+const refs = getRefs();
 
 
 refs.searchBoxEl.addEventListener('input', debounce(onSearchBoxInput, DEBOUNCE_DELAY));
@@ -36,6 +36,8 @@ function onSearchBoxInput(e) {
     }
 
     if (data.length > 1 && data.length <= 10) {
+      renderCountryInfo();
+
       markup = data.map(makeMarkupCountryList).join('');
       renderCountryList(markup);
     }
@@ -50,32 +52,35 @@ function onSearchBoxInput(e) {
   .catch(error => console.log("Oops, we have a problem: ", error));
 };
 
-function makeMarkupCountryList(data) {
+function makeMarkupCountryList(element) {
   return `<li "country-list__item">
       <img 
         class="country-list__image" 
-        src="${flags.svg}" 
+        src="${element.flags.svg}" 
         alt="Flag of country" 
         width="50" 
         height="50"/>
-      <p class="country-list__name">${name}</p>
+      <p class="country-list__name">${element.name.official}</p>
     </li>`
 };
 
-function makeMarkupCountryInfo({ name, flags, capital, population, languages }) {
+function makeMarkupCountryInfo(data) {
+  let languagesArray = Object.values(data[0].languages);
+  let languages = languagesArray.join(',');
+  
   return `<li class="country-info__item">
     <div class="country-info__list">
       <img
         class="country-info__image"
-        src="${flags.svg}" 
+        src="${data[0].flags.svg}" 
         alt="Big flag of country"
         width="70" 
         height="70"
       />
-      <h2 class="country-info__name">${name}</h2>
-      <p><b> capital:</b> ${capital}</p>
-      <p><b> population:</b> ${population}</p>
-      <p><b> languages:</b> ${Object.values(languages)}</p>
+      <h2 class="country-info__name">${data[0].name.official}</h2>
+      <p><span>Capital:</span>${data[0].capital}</p>
+      <p><span>Population:</span> ${data[0].population}</p>
+      <p><span>Languages:</span>${Object.values(languages)}</p>
     </div>
   </li>`;
 };
