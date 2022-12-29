@@ -99,5 +99,3 @@ function notifyAddLetters() {
     'Too many matches found. Please enter a more specific name.'
   );
 }
-
-
